@@ -1,0 +1,23 @@
+server:
+  port: 8081
+
+app:
+  name: User Management API
+  description: Advanced REST API with validation and error handling
+  version: 2.0.0
+  features:
+    validation: true
+    error-handling: true
+  admin:
+    emails:
+      - admin@example.com
+      - support@example.com
+
+logging:
+  level:
+    com.workshop.firstapp: DEBUG
+    org.springframework: INFO
+
+spring:
+  application:
+    name: user-management-api
