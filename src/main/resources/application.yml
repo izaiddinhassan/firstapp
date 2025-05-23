@@ -1,23 +1,39 @@
 server:
-  port: 8081
+  port: 8081  # Keep your existing port
 
 app:
   name: User Management API
-  description: Advanced REST API with validation and error handling
-  version: 2.0.0
+  description: Advanced REST API with JPA and Insurance Policy Management
+  version: 3.0.0
   features:
     validation: true
     error-handling: true
-  admin:
-    emails:
-      - admin@example.com
-      - support@example.com
+    jpa: true
+
+spring:
+  application:
+    name: firstapp
+
+  datasource:
+    url: jdbc:h2:mem:policydb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
 
 logging:
   level:
     com.workshop.firstapp: DEBUG
-    org.springframework: INFO
-
-spring:
-  application:
-    name: user-management-api
+    org.hibernate.SQL: DEBUG
