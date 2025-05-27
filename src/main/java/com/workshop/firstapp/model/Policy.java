@@ -1,59 +1,64 @@
 package com.workshop.firstapp.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.TextIndexed;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "policies")
+@Document(collection = "policies")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Policy {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id; // Changed from Long to String for MongoDB
 
-    @Column(name = "policy_number", unique = true, nullable = false)
+    @Indexed(unique = true)
     private String policyNumber;
 
-    @Column(name = "policy_holder_name", nullable = false)
+    @TextIndexed // Enable text search on policy holder name
     private String policyHolderName;
 
-    @Column(name = "policy_type", nullable = false)
-    private String policyType; // e.g., "Term", "Whole Life", "Universal"
-
-    @Column(name = "start_date", nullable = false)
+    private String policyType;
     private LocalDate startDate;
-
-    @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
-
-    @Column(name = "base_premium", nullable = false)
     private double basePremium;
-
-    @Column(name = "sum_assured", nullable = false)
     private double sumAssured;
 
-    @OneToMany(mappedBy = "policy", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    // Embedded approach - riders stored within policy document
     private List<Rider> riders = new ArrayList<>();
 
-    // Helper method for managing bidirectional relationship
+    // Reference approach - customer in separate collection
+    @DBRef
+    private Customer customer;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    // Helper methods for managing embedded riders
     public void addRider(Rider rider) {
         riders.add(rider);
-        rider.setPolicy(this);
         this.basePremium += rider.getPremium();
     }
 
     public void removeRider(Rider rider) {
         riders.remove(rider);
-        rider.setPolicy(null);
         this.basePremium -= rider.getPremium();
     }
 }

@@ -1,39 +1,24 @@
 server:
-  port: 8081  # Keep your existing port
+  port: 8081 # Keep your existing port
 
 app:
   name: User Management API
-  description: Advanced REST API with JPA and Insurance Policy Management
-  version: 3.0.0
+  description: Advanced REST API with MongoDB and Insurance Policy Management
+  version: 4.0.0
   features:
     validation: true
     error-handling: true
-    jpa: true
+    mongodb: true
 
 spring:
   application:
     name: firstapp
-
-  datasource:
-    url: jdbc:h2:mem:policydb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: password
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/insurance_db
+      auto-index-creation: true
 
 logging:
   level:
     com.workshop.firstapp: DEBUG
-    org.hibernate.SQL: DEBUG
+    org.springframework.data.mongodb: DEBUG
