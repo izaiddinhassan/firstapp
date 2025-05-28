@@ -1,5 +1,6 @@
 package com.workshop.firstapp.service;
 
+import com.workshop.firstapp.exception.BadRequestException;
 import com.workshop.firstapp.exception.ResourceNotFoundException;
 import com.workshop.firstapp.model.Policy;
 import com.workshop.firstapp.model.Rider;
@@ -11,9 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,15 @@ public class PolicyService {
     private final CustomerRepository customerRepository;
 
     public Policy buyPolicy(Policy policy) {
+
+        if (!StringUtils.hasText(policy.getPolicyHolderName())) {
+            throw new BadRequestException("Policy holder name cannot be null or empty");
+        }
+
+        if (policy.getBasePremium() <= 0) {
+            throw new BadRequestException("Premium must be positive");
+        }
+
         // Generate policy number if not provided
         if (policy.getPolicyNumber() == null || policy.getPolicyNumber().isEmpty()) {
             policy.setPolicyNumber(generatePolicyNumber());
